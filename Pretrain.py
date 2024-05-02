@@ -85,7 +85,8 @@ def train(model, data_loader, optimizer, tokenizer, epoch, warmup_steps, device,
     
     
 def main(args, config):
-    utils.init_distributed_mode(args)    
+    if args.distributed:
+        utils.init_distributed_mode(args)    
     
     device = torch.device(args.device)
 
@@ -191,13 +192,14 @@ if __name__ == '__main__':
     parser.add_argument('--seed', default=42, type=int)
     parser.add_argument('--world_size', default=1, type=int, help='number of distributed processes')    
     parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
-    parser.add_argument('--distributed', default=True, type=bool)
+    parser.add_argument('--distributed', default=False, type=bool)
     args = parser.parse_args()
 
-    config = yaml.load(open(args.config, 'r'), Loader=yaml.Loader)
+    my_yaml = yaml.YAML(typ='rt')
+    config = my_yaml.load(open(args.config, 'r'))
 
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 
-    yaml.dump(config, open(os.path.join(args.output_dir, 'config.yaml'), 'w'))    
+    my_yaml.dump(config, open(os.path.join(args.output_dir, 'config.yaml'), 'w'))
     
     main(args, config)
