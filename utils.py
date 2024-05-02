@@ -146,7 +146,7 @@ class MetricLogger(object):
                         i, len(iterable), eta=eta_string,
                         meters=str(self),
                         time=str(iter_time), data=str(data_time),
-                        memory=torch.cuda.max_memory_allocated() / MB))
+                        memory=torch.cuda.max_memory_allocated() / MB), flush=True)
                 else:
                     print(log_msg.format(
                         i, len(iterable), eta=eta_string,
