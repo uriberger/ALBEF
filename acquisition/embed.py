@@ -1,4 +1,5 @@
-from models.blip_pretrain import blip_pretrain
+from models.model_pretrain import ALBEF
+from models.tokenization_bert import BertTokenizer
 import ruamel.yaml as yaml
 import torch
 from tqdm import tqdm
@@ -8,7 +9,9 @@ def load_model(model_path):
     device = torch.device('cuda')
     my_yaml = yaml.YAML(typ='rt')
     config = my_yaml.load(open('configs/pretrain.yaml', 'r'))
-    model = blip_pretrain(image_size=config['image_size'], vit=config['vit'], vit_grad_ckpt=config['vit_grad_ckpt'], vit_ckpt_layer=config['vit_ckpt_layer'], queue_size=config['queue_size'])
+    text_encoder = 'bert-base-uncased'
+    tokenizer = BertTokenizer.from_pretrained(text_encoder)
+    model = ALBEF(config=config, text_encoder=text_encoder, tokenizer=tokenizer, init_deit=True)
     model = model.to(device)
     checkpoint = torch.load(model_path, map_location='cpu') 
     state_dict = checkpoint['model']    
