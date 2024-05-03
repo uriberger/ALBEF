@@ -173,7 +173,8 @@ def main(args, config):
             with open(os.path.join(args.output_dir, "log.txt"),"a") as f:
                 f.write(json.dumps(log_stats) + "\n")
 
-        dist.barrier()  
+        if args.distributed:
+            dist.barrier()  
                 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
