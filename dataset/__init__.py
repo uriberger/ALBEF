@@ -38,7 +38,7 @@ def create_dataset(dataset, config):
         ])   
     
     if dataset=='pretrain':
-        dataset = pretrain_dataset(config['train_file'], pretrain_transform)                  
+        dataset = pretrain_dataset(config['train_file'], pretrain_transform, noise_images=config['noise_images'])                  
         return dataset      
                
     elif dataset=='re':          

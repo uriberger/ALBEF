@@ -1,3 +1,4 @@
+import numpy as np
 import json
 import os
 import random
@@ -82,12 +83,14 @@ class re_eval_dataset(Dataset):
         
 
 class pretrain_dataset(Dataset):
-    def __init__(self, ann_file, transform, max_words=30):        
+    def __init__(self, ann_file, transform, max_words=30, noise_images=False):        
         self.ann = []
         for f in ann_file:
             self.ann += json.load(open(f,'r'))
         self.transform = transform
         self.max_words = max_words
+        self.noise_images = noise_images
+        self.generated_sample_image = False
         
         
     def __len__(self):
@@ -104,6 +107,12 @@ class pretrain_dataset(Dataset):
             caption = pre_caption(ann['caption'], self.max_words)
       
         image = Image.open(ann['image']).convert('RGB')   
+        if self.noise_images:
+            imarray = np.random.rand(image.size[1], image.size[0], 3)*255
+            image = Image.fromarray(imarray.astype('uint8')).convert('RGB')
+        if not self.generated_sample_image:
+            image.save('sample.jpg')
+            self.generated_sample_image = True
         image = self.transform(image)
                 
         return image, caption
