@@ -71,5 +71,5 @@ def run_pos_tagging_experiment(noise_images, version, dataset):
     noise_images_str = ''
     if noise_images:
         noise_images_str = '_noise_images'
-    model_path = f'output/pretrain{noise_images_str}/checkpoint_0{version}.pth'
+    model_path = f'output/Pretrain{noise_images_str}/checkpoint_0{version}.pth'
     return train_classifier(model_path, config, True, dataset)

@@ -8,7 +8,7 @@ import math
 def load_model(model_path):
     device = torch.device('cuda')
     my_yaml = yaml.YAML(typ='rt')
-    config = my_yaml.load(open('configs/pretrain.yaml', 'r'))
+    config = my_yaml.load(open('configs/Pretrain.yaml', 'r'))
     text_encoder = 'bert-base-uncased'
     tokenizer = BertTokenizer.from_pretrained(text_encoder)
     model = ALBEF(config=config, text_encoder=text_encoder, tokenizer=tokenizer, init_deit=True)
@@ -32,7 +32,7 @@ def agg_vectors(vectors, method):
 def extract_features_from_sentences(sentences, model, agg_subtokens_method):
     with torch.no_grad():
         text = model.tokenizer(sentences, padding=True, return_tensors="pt").to(torch.device('cuda'))
-        text_feats = model.text_encoder(text.input_ids, attention_mask = text.attention_mask, return_dict = True, mode = 'text').last_hidden_state
+        text_feats = model.text_encoder(text.input_ids, attention_mask = text.attention_mask, return_dict = True, mode = 'text', output_hidden_states = True).hidden_states[-1]
 
     feature_list = []
     for sent_ind in range(len(sentences)):
@@ -68,7 +68,7 @@ def extract_features_from_tokens(token_lists, model, agg_subtokens_method):
     sentences = [' '.join(x) for x in token_lists]
     with torch.no_grad():
         text = model.tokenizer(sentences, padding=True, return_tensors="pt").to(torch.device('cuda'))
-        text_feats = model.text_encoder(text.input_ids, attention_mask = text.attention_mask, return_dict = True, mode = 'text').last_hidden_state
+        text_feats = model.text_encoder(text.input_ids, attention_mask = text.attention_mask, return_dict = True, mode = 'text', output_hidden_states = True).hidden_states[-1]
 
     feature_list = []
     for sent_ind in range(len(sentences)):
