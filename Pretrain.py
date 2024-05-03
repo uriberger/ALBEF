@@ -198,6 +198,7 @@ if __name__ == '__main__':
 
     my_yaml = yaml.YAML(typ='rt')
     config = my_yaml.load(open(args.config, 'r'))
+    print(f'Running with noise_images={config["noise_images"]}', flush=True)
 
     Path(args.output_dir).mkdir(parents=True, exist_ok=True)
 

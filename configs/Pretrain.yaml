@@ -1,6 +1,7 @@
 train_file: ['train_data/coco.json', 'train_data/gcc.json', 'train_data/flickr30k.json']
 # each train_file (json) contains a python list where each item is {'image': img_path, 'caption': text or list_of_text }               
 bert_config: 'configs/config_bert.json'
+noise_images: False
 
 image_res: 256
 vision_width: 768
