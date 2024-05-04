@@ -48,7 +48,9 @@ class ALBEF(nn.Module):
         vision_width = config['vision_width']       
         bert_config = BertConfig.from_json_file(config['bert_config'])
         
-        self.text_encoder = BertForMaskedLM.from_pretrained(text_encoder, config=bert_config)      
+        #self.text_encoder = BertForMaskedLM.from_pretrained(text_encoder, config=bert_config)
+        # Initialize randomly
+        self.text_encoder = BertForMaskedLM(bert_config)      
 
         text_width = self.text_encoder.config.hidden_size
         self.vision_proj = nn.Linear(vision_width, embed_dim)
