@@ -32,7 +32,7 @@ from scheduler import create_scheduler
 from optim import create_optimizer
 
 
-def train(model, data_loader, optimizer, tokenizer, epoch, warmup_steps, device, scheduler, config):
+def train(model, data_loader, optimizer, tokenizer, epoch, warmup_steps, device, scheduler, config, save_every):
     # train
     model.train()  
     
@@ -51,6 +51,16 @@ def train(model, data_loader, optimizer, tokenizer, epoch, warmup_steps, device,
         data_loader.sampler.set_epoch(epoch)
 
     for i, (image, text) in enumerate(metric_logger.log_every(data_loader, print_freq, header)):
+
+        if save_every > 0 and i % save_every == 0:
+            save_obj = {
+                'model': model.state_dict(),
+                'optimizer': optimizer.state_dict(),
+                'lr_scheduler': scheduler.state_dict(),
+                'config': config,
+                'epoch': epoch,
+            }
+            torch.save(save_obj, os.path.join(args.output_dir, 'checkpoint_%02d_%05d.pth'%(epoch, i)))
         
         optimizer.zero_grad()
   
@@ -156,7 +166,7 @@ def main(args, config):
         if epoch>0:
             lr_scheduler.step(epoch+warmup_steps)  
             
-        train_stats = train(model, data_loader, optimizer, tokenizer, epoch, warmup_steps, device, lr_scheduler, config) 
+        train_stats = train(model, data_loader, optimizer, tokenizer, epoch, warmup_steps, device, lr_scheduler, config, args.save_every) 
         if utils.is_main_process():  
             log_stats = {**{f'train_{k}': v for k, v in train_stats.items()},
                          'epoch': epoch,
@@ -194,6 +204,7 @@ if __name__ == '__main__':
     parser.add_argument('--world_size', default=1, type=int, help='number of distributed processes')    
     parser.add_argument('--dist_url', default='env://', help='url used to set up distributed training')
     parser.add_argument('--distributed', default=False, type=bool)
+    parser.add_argument('--save_every', default=0, type=int)
     args = parser.parse_args()
 
     my_yaml = yaml.YAML(typ='rt')
