@@ -6,6 +6,7 @@ from acquisition.classifier import create_classifier
 from acquisition.trainer import create_trainer
 from acquisition.classifier_config import ClassifierConfig
 import random
+import torch
 from datasets import load_dataset
 
 def get_ontonotes_data(split, binary):
@@ -46,7 +47,7 @@ def get_data(model_path, binary, dataset):
     # Features and pos data were created using different tokenizers, filter sentences that were tokenized differently
     data = []
     for feature_vectors, pos_data in zip(features, pos_data):
-        if feature_vectors is None or feature_vectors.shape[0] != len(pos_data):
+        if feature_vectors is None or torch.sum(torch.isnan(feature_vectors)) > 0 or feature_vectors.shape[0] != len(pos_data):
             continue
         data += [(feature_vectors[i], pos_data[i]['label']) for i in range(len(pos_data))]
 
