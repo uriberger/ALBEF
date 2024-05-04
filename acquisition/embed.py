@@ -56,7 +56,7 @@ def extract_features_from_sentences(sentences, model, agg_subtokens_method):
                 feature_vector = agg_vectors(text_feats[sent_ind, cur_token_start_ind:i, :], agg_subtokens_method)
                 feature_vectors.append(feature_vector)
             cur_token_start_ind = i
-        feature_vector = agg_vectors(text_feats[sent_ind, cur_token_start_ind:i, :], agg_subtokens_method)
+        feature_vector = agg_vectors(text_feats[sent_ind, cur_token_start_ind:i+1, :], agg_subtokens_method)
         feature_vectors.append(feature_vector)
 
         feature_vectors = [x.unsqueeze(dim=0) for x in feature_vectors]
