@@ -128,7 +128,7 @@ def main(args, config):
 
     #### Model #### 
     print("Creating model")
-    model = ALBEF(config=config, text_encoder=args.text_encoder, tokenizer=tokenizer, init_deit=True)
+    model = ALBEF(config=config, text_encoder=args.text_encoder, tokenizer=tokenizer, init_deit=False)
     
     model = model.to(device)   
         
